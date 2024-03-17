@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_ssAPI_BASE_URL: http://127.0.0.1:9090/api/users
+    ports:
+      - "3000:3001"
+    depends_on:
+      - userservice
+      - addressservice
+      - eurekaserver
+     
+  userservice:
+    # image: vilaswadje/user-service:0.0.1
+    build:
+      context: ./assignment/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:9090"
+    depends_on:
+      - database
+  
+  addressservice:
+  # image: vilaswadje/address-service:0.0.1
+    build:
+      context: ./assignment/address-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - database
+
+  eurekaserver:
+  # image: vilaswadje/eureka-server:0.0.1
+    build:
+      context: ./assignment/eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761" 
+
+  database:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: userdb
+      #MYSQL_USER: root
+      #MYSQL_PASSWORD: root
+      DATABASE_PORT: 3306
+    ports:
+      - "3306:3306"
+   
+   
